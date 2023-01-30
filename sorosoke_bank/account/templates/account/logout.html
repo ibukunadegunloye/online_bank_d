@@ -1,0 +1,13 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!--Log In--> 
+<div class="container">
+	<h3>Logout</h3>
+
+  <p>You have been logged out. <a class="btn btn-sm btn-info" href="{% url 'login' %}">Login</a> again.</p>
+</div>
+
+{% endblock %}

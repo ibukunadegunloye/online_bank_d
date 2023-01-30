@@ -1,0 +1,18 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}   
+{% block content %}
+
+<!--Register--> 
+<div class="container">
+	<h1 class="text-center">Open a Current Account</h1>
+	<form method="POST">
+		{% csrf_token %}
+		{{ form|crispy }}         
+		<br>           
+		<button class="btn btn-primary" type="submit">Open</button>
+	</form>
+	<p class="text-center text-muted">Would you like to open a savings account instead? <a href="{% url 'savings_account' %}">savings</a></p>
+</div>
+
+{% endblock %}
