@@ -17,13 +17,13 @@ def account_number_generator():
 class Savings_Account(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     savings_rubbish = models.CharField(max_length=30)
-    account_number = models.PositiveBigIntegerField(primary_key=True, default=account_number_generator())
+    account_number = models.PositiveBigIntegerField(primary_key=True, default=0)
 
     
 
 class Current_Account(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    current_rubbish = models.CharField(max_length=30)
+    current_rubbish = models.CharField(max_length=30, default="")
     account_number = models.PositiveBigIntegerField(primary_key=True, default=account_number_generator())
 
 

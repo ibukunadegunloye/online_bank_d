@@ -14,11 +14,10 @@ def register_account(request):
             form.save()
             username = form.cleaned_data['username']
             messages.success(request, f'{username} your account has been created successfully!, You may now login.')
-            return redirect ('login')
+            return redirect('login')
     else:
         form = RegisterAccountForm()
-    return render (request, 'account/register_account.html', {'form':form})
-
+    return render(request, 'account/register_account.html', {'form': form})
 
 # def login_account(request):
 #     if request.method == 'POST':

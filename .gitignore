@@ -3,3 +3,6 @@ media/*
 *_pycache_*
 *.log
 *venv/*
+virtual/*
+delete/*
+*.sqlite3
