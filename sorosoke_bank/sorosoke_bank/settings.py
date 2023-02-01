@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'bank',
     'account',
     'crispy_forms',
+    'django_countries',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

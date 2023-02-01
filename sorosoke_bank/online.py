@@ -121,18 +121,7 @@
 # # # print(p1.get_account_balance)
 # # # print (int(time.time()) )
 
-import random
+def test(a,**ar):
+    print(ar)
 
-def account_number_generator():
-    present_account_number_list = [0]
-    x = "%0.12d" % random.randint(0,999999999999)
-
-    for num in present_account_number_list:
-        if x == num:
-            account_number_generator()
-        else:
-            present_account_number_list.append(x)
-            return x
-            
-
-print(account_number_generator())
+test(1,2,3,4)
