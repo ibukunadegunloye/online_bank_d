@@ -1,19 +1,66 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django_countries.fields import CountryField
+from django_countries.widgets import CountrySelectWidget
+
+from .models import ExtendedUser
 
 
 
-class RegisterAccountForm(UserCreationForm):
-    email = forms.EmailField()
-    first_name = forms.CharField(max_length=255)
-    last_name = forms.CharField(max_length=255)
+class ExtendedUserForm(forms.ModelForm):
+
+    phone_number = forms.CharField(label="Phone Number")
 
     class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+        model = ExtendedUser
+        fields = [
+            'email',
+            'first_name',
+            'last_name',
+            'phone_number',
+            'address',
+            'gender',
+            'occupation',
+            'marital_status',
+            'date_of_birth',
+            'nationality',
+            'account_type',
+        ]
+        widgets = {
+            'nationality': CountrySelectWidget(),
+            'date_of_birth': forms.widgets.DateTimeInput(attrs={'type': 'date'}),
+        }
+    password1 = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput)
+    pin = forms.CharField(max_length=6, widget=forms.PasswordInput)
+    confirm_pin = forms.CharField(max_length=6, widget=forms.PasswordInput)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+        pin = cleaned_data.get("pin")
+        confirm_pin = cleaned_data.get("confirm_pin")
+
+        if password1 != password2:
+            raise forms.ValidationError("Passwords do not match")
+
+        if pin != confirm_pin:
+            raise forms.ValidationError("PINs do not match")
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password1'])
+        user.pin = self.cleaned_data['pin']
+        if commit:
+            user.save()
+        return user
+
+
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=255)
-    password = forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
+     

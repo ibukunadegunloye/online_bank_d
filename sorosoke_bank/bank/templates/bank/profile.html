@@ -1,0 +1,71 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+{% block content %}
+
+<h1 class="text-center mt-3 mb-3">Account Profile</h1>
+
+<div class="container">
+  <div class="row">
+
+    {% include 'bank/profile_menu.html' %}
+    
+    <div class="col-lg-9">
+      <div id="profile" class="card mb-3">
+        <div class="card-header list-group-item active">
+          Profile Information
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td><strong>Full Name:</strong></td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+              </tr>
+              <tr>
+                <td><strong>Email:</strong></td>
+                <td>{{ user.email }}</td>
+              </tr>
+              <tr>
+                <td><strong>Date of Birth:</strong></td>
+                <td>{{ user.date_of_birth }}</td>
+              </tr>
+              <tr>
+                <td><strong>Phone Number:</strong></td>
+                <td>{{ user.phone_number }}</td>
+              </tr>
+              <tr>
+                <td><strong>Address:</strong></td>
+                <td>{{ user.address }}</td>
+              </tr>
+              <tr>
+                <td><strong>Nationality:</strong></td>
+                <td>{{ user.nationality }}</td>
+              </tr>
+              <tr>
+                <td><strong>Gender:</strong></td>
+                <td>{{ user.gender }}</td>
+              </tr>
+              <tr>
+                <td><strong>Occupation:</strong></td>
+                <td>{{ user.occupation }}</td>
+              </tr>
+              <tr>
+                <td><strong>Marital Status:</strong></td>
+                <td>{{ user.marital_status }}</td>
+              </tr>
+              <tr>
+                <td><strong>Date Joined:</strong></td>
+                <td>{{ user.date_joined }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add more sections for account information, transactions, and settings -->
+      
+    </div>
+  </div>
+</div>
+<br>
+{% endblock %}

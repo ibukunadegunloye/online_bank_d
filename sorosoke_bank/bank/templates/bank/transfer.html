@@ -1,0 +1,128 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+{% block content %}
+
+  <h1 class="text-center mt-3 mb-3">Transfers</h1>
+
+  <div class="container">
+    <div class="row">
+      
+      {% include 'bank/profile_menu.html' %}
+
+      <!-- Transfer to same user -->
+      <div class="card-body">
+        <form method="post" id="transfer-to-self">
+          {% csrf_token %}
+          <h5><label for="from_account">Transfer to self</label></h5><br>
+          <div class="form-group">
+            <label for="from_account">From Account</label>
+            <select class="form-control" id="from_account" name="from_account">
+              {% for account in savings_accounts %}
+              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }} ||  N{{ account.account_balance }}</option>
+              {% endfor %}
+              {% for account in current_accounts %}
+              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }} ||  N{{ account.account_balance }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="to_account">To Account</label>
+            <select class="form-control" id="to_account" name="to_account">
+              {% for account in savings_accounts %}
+              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }}  ||  N{{ account.account_balance }}</option>
+              {% endfor %}
+              {% for account in current_accounts %}
+              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }}  ||  N{{ account.account_balance }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input class="form-control" id="amount" name="amount" pattern="\d+" title="Please enter only digits">
+          </div>
+          <div class="form-group">
+            <label for="amount">Pin</label>
+            <input class="form-control" id="pin" name="pin" type="password" pattern="\d{6}" title="Please enter only digits">
+          </div>
+          <button type="submit" class="btn btn-success">Transfer</button>
+        </form>
+      </div>
+      <!-- Transfer to other users -->
+      <div class="card-body">
+        <form method="post" id="transfer-to-others-form">
+          {% csrf_token %}
+          <h5><label for="from_account">Transfer to others</label></h5><br>
+          <div class="form-group">
+            <label for="from_account">From Account</label>
+            <select class="form-control" id="from_account" name="from_account">
+              {% for account in savings_accounts %}
+              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }} ||  N{{ account.account_balance }}</option>
+              {% endfor %}
+              {% for account in current_accounts %}
+              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }} ||  N{{ account.account_balance }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="to_account">To Account</label>
+            <input class="form-control" id="to_account" name="to_account" pattern="^\d{12}$" title="Please enter only digits">
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input class="form-control" id="amount" name="amount" pattern="\d+" title="Please enter only digits">
+          </div>
+          <div class="form-group">
+            <label for="amount">Pin</label>
+            <input class="form-control" id="pin" name="pin" type="password" pattern="\d{6}" title="Please enter only digits">
+          </div>
+          <button type="submit" class="btn btn-success">Transfer</button>
+        </form>
+      </div>
+      
+    </div>
+  </div>
+
+<script>
+
+  $(document).ready(function(){
+    var debouncetime;
+    $('#transfer-to-others-form #to_account').on('input', function(){
+      setTimeout(function() {
+      var account_number = $(this).val();
+      if(account_number.length == 12 && /^\d{12}$/.test(account_number)){
+        clearTimeout(debouncetime);
+        debouncetime = _.debounce(function() {
+          $.ajax({
+            url: '/search_account/',
+            type: 'GET',
+            data: {'account_number': account_number},
+            success: function(data){
+              if(data) {
+                $('#to_account').val(data);
+              } else {
+                alert("Account number not found");
+              }
+            },
+            error: function(xhr, status, error){
+              console.log(error);
+            }
+          });
+        }, 1000); // set the debounce time to 1000ms
+        
+        debouncetime();
+      } else {
+        alert("Account number should be a 12-digit integer");
+      }
+    }.bind(this), 1000);
+    });
+  });
+
+</script>
+   
+{% endblock %}
+
+
+
+
+
+

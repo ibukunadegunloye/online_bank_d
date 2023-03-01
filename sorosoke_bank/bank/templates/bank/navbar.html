@@ -1,64 +1,94 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{% url 'home' %}">Home</a>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          
-          {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-            </li>
-            
-            <div class="dropdown">
-              <button class="btn btn-outline-secondary dropdown-toggle"  href="#" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Account
-              </button>
-              <ul class="dropdown-menu">
-                <li><a  class="dropdown-item" type="button" href="{% url 'savings_account' %}" >Savings</a></li>
-                <li><a  class="dropdown-item" type="button" href="{% url 'create_account' %}" >Open an Account</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><button class="dropdown-item" type="button">Something else here</button></li>
+<!--header-->
+<header id="site-header" class="fixed-top">
+  <div class="container">
+      <nav class="navbar navbar-expand-lg stroke px-0">
+          <h1> <a class="navbar-brand" href="{% url 'home' %}">
+                  <span class="fa fa-cc-visa"></span> Bank Cards
+              </a></h1>
+          <!-- if logo is image enable this   
+  <a class="navbar-brand" href="#index.html">
+      <img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
+  </a> -->
+          <button class="navbar-toggler  collapsed bg-gradient" type="button" data-toggle="collapse"
+              data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+              aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon fa icon-expand fa-bars"></span>
+              <span class="navbar-toggler-icon fa icon-close fa-times"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+              <ul class="navbar-nav ml-auto">
+                  <li class="nav-item active">
+                      <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item @@about__active">
+                      <a class="nav-link" href="{% url 'about' %}">About</a>
+                  </li>
+                  <li class="nav-item @@services__active">
+                      <a class="nav-link" href="{% url 'services' %}">Services</a>
+                  </li>
+                  <li class="nav-item @@contact__active">
+                      <a class="nav-link" href="{% url 'contact' %}">Contact</a>
+                  </li>
+
+
+                  {% if user.is_authenticated %}
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Account
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'savings_account'%}">Open Savings Account</a></li>
+                        <li><a class="dropdown-item" href="{% url 'current_account'%}">Open a Current Account</a></li>
+                    </ul>
+                  </li>
+
+
+                  <li class="nav-item @@contact__active">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                  </li>
+                  
+                  {% else %}
+                  <li class="nav-item @@contact__active">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                  </li>
+                  <li class="nav-item @@contact__active">
+                    <a class="nav-link" href="{% url 'register_account' %}">Register</a>
+                  </li>
+                  {% endif %}
+
+
+                  <!--/search-right-->
+                  <!-- <div class="search mr-3">
+                      <input class="search_box" type="checkbox" id="search_box">
+                      <label class="fa fa-search" for="search_box"></label>
+                      <div class="search_form">
+                          <form action="error.html" method="GET">
+                              <input type="text" placeholder="Search"><input type="submit" value="search">
+                          </form>
+                      </div>
+                  </div> -->
+                  <!--//search-right-->
               </ul>
-            </div>
-
-          {% else %}
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'register_account' %}">Register</a>
-            </li>
-          
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">Login</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
-            </li>
-          {% endif %}
-          
-
-          
-          
-          
-
-          <!-- <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Dropdown
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled">Disabled</a>
-          </li> -->
-        </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-      </div>
-    </div>
-  </nav>
+          </div>
+          <!-- toggle switch for light and dark theme -->
+          <!-- <div class="mobile-position">
+              <nav class="navigation">
+                  <div class="theme-switch-wrapper">
+                      <label class="theme-switch" for="checkbox">
+                          <input type="checkbox" id="checkbox">
+                          <div class="mode-container">
+                              <i class="gg-sun"></i>
+                              <i class="gg-moon"></i>
+                          </div>
+                      </label>
+                  </div>
+              </nav>
+          </div> -->
+          <!-- //toggle switch for light and dark theme -->
+      </nav>
+  </div>
+</header>
+<!--/header-->

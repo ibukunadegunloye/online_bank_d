@@ -1,14 +1,9 @@
-import time, random
-from .models import Create_Account
+from django.core.exceptions import ValidationError
+import random
 
 
 
-def account_number_generator():
-            x = "%0.12d" % random.randint(0,999999999999)
-            return x
+def initial_deposit_minimum(value):
+    if value < 100:
+        raise ValidationError("Initial deposit must be at least N1000.")
 
-
-
-# def clean_account_number(self):
-#         value = self.cleaned_data['account_number']
-#         wed = Create_Account.objects.filter(account_number)

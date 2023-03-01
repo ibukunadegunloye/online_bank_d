@@ -1,0 +1,64 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+{% block content %}
+
+<h1 class="text-center mt-3 mb-3">Current Account(s)</h1>
+
+<div class="container">
+  <div class="row">
+    
+    {% include 'bank/profile_menu.html' %}
+
+    {% if accounts %}
+    
+    <div class="col-lg-6">
+        <div class="accordion" id="current-accounts">
+            {% for account in accounts %}
+            <div class="card">
+              <div class="card-header" id="heading-{{ account.account_number }}">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-{{ account.account_number }}" aria-expanded="true" aria-controls="collapse-{{ account.account_number }}">
+                    Account {{ account.account_number }} - Balance: {{ account.account_balance }}
+                  </button>
+                </h2>
+              </div>
+        
+              <div id="collapse-{{ account.account_number }}" class="collapse" aria-labelledby="heading-{{ account.account_number }}" data-parent="#current-accounts">
+                <div class="card-body">
+                  <p>Contents of Account {{ account.account_number }}</p>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="card-body text-center py-5">
+                <p class="text-muted h4">No accounts available at this time.</p>
+            </div>
+            {% endfor %}
+        
+    </div>
+    
+    <!-- Add more sections for account information, transactions, and settings -->
+    {% else %}
+    <div class="card-body text-center py-5">
+    <p class="text-muted h4">No accounts available at this time.</p>
+    </div>
+    {% endif %}
+    </div>
+  </div>
+</div>
+<br>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

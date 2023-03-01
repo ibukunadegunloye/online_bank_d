@@ -1,13 +1,15 @@
 {% extends 'bank/base.html' %}
-{% load static %}
 
 {% block content %}
 
-<!--Log In--> 
+<!--Logout--> 
 <div class="container">
-	<h3>Logout</h3>
-
-  <p>You have been logged out. <a class="btn btn-sm btn-info" href="{% url 'login' %}">Login</a> again.</p>
+  <br><br>
+	<h1 class="text-center my-4">You Have Been Successfully Logged Out</h1>
+  <p class="text-center">Thank you for using our service. If you need to log in again, you can do so by clicking the button below.</p>
+	<div class="form-group text-center">
+		<a class="btn btn-success" href="{% url 'login' %}">Login</a>
+	</div>
 </div>
-
+<br><br>
 {% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+{% block content %}
+
+<h1 class="text-center mt-3 mb-3">Savings Account(s)</h1>
+
+<div class="container">
+  <div class="row">
+    
+    {% include 'bank/profile_menu.html' %}
+    
+    {% if accounts %}
+    {% for account in accounts %}
+    <div class="col-lg-9">
+      <div id="profile" class="card mb-3">
+        
+        <div class="card-header list-group-item active">
+          Profile Information
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td><strong>Account Number:</strong></td>
+                <td>{{ account.account_number }}</td>
+              </tr>
+              <tr>
+                <td><strong>Account Balance:</strong></td>
+                <td>{{ account.account_balance }}</td>
+              </tr>
+              <tr>
+                <td><strong>Send Money?:</strong></td>
+                <td>Transfer Funds <a href="#"><button class="btn btn-lg btn-success"></button></a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endfor %}
+      <!-- Add more sections for account information, transactions, and settings -->
+        {% else %}
+        <div class="card-body text-center py-5">
+            <p class="text-muted h4">No accounts available at this time.</p>
+        </div>
+        {% endif %}
+    </div>
+  </div>
+</div>
+<br>
+{% endblock %}
