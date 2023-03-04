@@ -2,6 +2,8 @@
 {% load static %}
 {% block content %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
   <h1 class="text-center mt-3 mb-3">Transfers</h1>
 
   <div class="container">
@@ -48,6 +50,7 @@
         </form>
       </div>
       <!-- Transfer to other users -->
+      
       <div class="card-body">
         <form method="post" id="transfer-to-others-form">
           {% csrf_token %}
@@ -66,6 +69,7 @@
           <div class="form-group">
             <label for="to_account">To Account</label>
             <input class="form-control" id="to_account" name="to_account" pattern="^\d{12}$" title="Please enter only digits">
+            <input class="form-control" type="text" name="dest_account" id="dest_account" readonly>
           </div>
           <div class="form-group">
             <label for="amount">Amount</label>
@@ -79,50 +83,39 @@
         </form>
       </div>
       
+
     </div>
-  </div>
-
-<script>
-
-  $(document).ready(function(){
-    var debouncetime;
-    $('#transfer-to-others-form #to_account').on('input', function(){
-      setTimeout(function() {
-      var account_number = $(this).val();
-      if(account_number.length == 12 && /^\d{12}$/.test(account_number)){
-        clearTimeout(debouncetime);
-        debouncetime = _.debounce(function() {
+    
+<div id="search_results"></div>
+    <script>
+      var delayTimer;
+      $('#transfer-to-others-form #to_account').keyup(function(){
+        clearTimeout(delayTimer);
+        $('#dest_account').val('Searching ...');
+        delayTimer = setTimeout(function(){
+          var account_number = $('#transfer-to-others-form #to_account').val();
           $.ajax({
-            url: '/search_account/',
-            type: 'GET',
-            data: {'account_number': account_number},
-            success: function(data){
-              if(data) {
-                $('#to_account').val(data);
+            url: '/search/account',
+            data: {
+              'account_number': account_number,
+              'random_number' : Math.random(),
+            }, 
+            dataType: 'json',
+            success: function(data){        
+              console.log(data);      
+              if (data.found) {
+                $('#dest_account').val(data.first_name + ' ' + data.last_name);
               } else {
-                alert("Account number not found");
+                $('#dest_account').val('Account not found.');
               }
-            },
-            error: function(xhr, status, error){
-              console.log(error);
             }
           });
-        }, 1000); // set the debounce time to 1000ms
-        
-        debouncetime();
-      } else {
-        alert("Account number should be a 12-digit integer");
-      }
-    }.bind(this), 1000);
-    });
-  });
+        }, 2000);
+      });
+    </script>
+    
+  </div>
 
-</script>
-   
+  
 {% endblock %}
-
-
-
-
-
 

@@ -185,23 +185,46 @@ def transfer(request):
 
 
 def search_account(request):
-    if request.is_ajax():
-        account_number = request.GET.get('account_number')
-        if len(account_number) >= 12:
-            savings_accounts = CreateSavingsAccount.objects.filter(account_number=account_number)
-            current_accounts = CreateCurrentAccount.objects.filter(account_number=account_number)
-            accounts = list(savings_accounts) + list(current_accounts)
-            if accounts:
-                data = {
-                    'found': True,
-                    'account_type': accounts[0].account_type,
-                    'account_balance': accounts[0].account_balance
-                }
-                return JsonResponse(data)
-            else:
-                data = {
-                    'found': False
-                }
-                return JsonResponse(data)
+    account_number = request.GET.get('account_number')
+    if len(account_number) == 12:
+        savings_accounts = CreateSavingsAccount.objects.filter(account_number=account_number)
+        current_accounts = CreateCurrentAccount.objects.filter(account_number=account_number)
+        accounts = list(savings_accounts) + list(current_accounts)
+        if accounts:
+            data = {
+                'found': True,
+                'account_type': accounts[0].account_type,
+                'account_balance': accounts[0].account_balance,
+                'first_name': accounts[0].user.first_name,
+                'last_name': accounts[0].user.last_name
+            }
+            return JsonResponse(data)
+        else:
+            data = {
+                'found': False
+            }
+            return JsonResponse(data)
     return render(request, 'bank/search_account.html')
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
