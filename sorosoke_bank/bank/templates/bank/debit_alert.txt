@@ -1,0 +1,23 @@
+Debit Alert
+
+Dear {{ user.first_name }} {{ user.last_name }},
+
+Sorosoke Bank electronic Notification Service (SSBeNS)
+
+This is to notify you that your account with us has been debited. The details of this transaction are shown below:
+
+Transaction Notification details:
+
+Account Number: {{ user.account_number }}
+Amount: NGN {{ amount }}
+Date and time: {{ transfer_date }} {{ transfer_time }}
+Destination: {{ reciever.first_name }} {{ reciever.last_name }}
+Transaction ID: {{ transfer_id }}
+Description: {{ description }}
+Account balance: NGN {{ user.account_balance }}
+If you have any questions or concerns regarding this transaction, please contact our customer support team.
+
+Thank you for choosing our services.
+
+Best regards,
+Sorosoke Bank

@@ -1,0 +1,30 @@
+
+Subject: Welcome to Sorosoke Bank!
+
+Dear {{ user.first_name }},,
+
+I'm thrilled to welcome you to [Bank Name]! We appreciate your trust in us and look forward to helping you manage your finances with our online banking services.
+
+Your account has been successfully created, and we're excited to share some information with you. Your account details are as follows:
+
+Name: {{ user.first_name }} {{ user.last_name }}
+Account Number: {{ user_account.account_number }}
+Account Type: {{ user_account.account_type }}
+
+To get started, please log in to your account by following these simple steps:
+
+Go to our website or download our mobile app from the App Store or Google Play.
+Click the 'Log In' button and enter your email address and password.
+Once you're logged in, you'll have access to all the features of our online banking platform, including the ability to view your account balances, make transfers, pay bills, and much more.
+If you have any questions or concerns, our friendly and knowledgeable support team is available to assist you. You can reach us by phone, email, or through our online chat service, which is available 24/7.
+
+Thank you again for choosing Sorosoke Bank as your financial partner. We are committed to providing you with a seamless and secure banking experience, and we're excited to be on this journey with you.
+
+Best regards,
+
+Ifeoma
+
+Sorosoke Bank Team
+
+
+

@@ -4,6 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django_countries.fields import CountryField
 from django.contrib.auth.hashers import make_password, check_password
 from .utils import validate_min_length
+import uuid
 
 
 
@@ -73,6 +74,7 @@ class ExtendedUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
 
+    is_email_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -110,28 +112,24 @@ class ExtendedUser(AbstractBaseUser, PermissionsMixin):
 
 
 
+class AccountVerificationEmailLog(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(ExtendedUser, on_delete=models.CASCADE, null=True, related_name='account_verification_email_log')
+    email_subject = models.CharField(max_length=100)
+    email_body = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Activation Email Log for {self.user.first_name} {self.user.last_name}"
 
 
+class WelcomeEmailLog(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(ExtendedUser, on_delete=models.CASCADE, null=True, related_name='welcome_email_log')
+    email_subject = models.CharField(max_length=100)
+    email_body = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
 
-
-
-
-
-
-
-# def set_password(self, raw_password):
-#         self.password = make_password(raw_password)
-
-#     def check_password(self, raw_password):
-#         return check_password(raw_password, self.password)
+    def __str__(self):
+        return f"Welcome Email Log for {self.user.first_name} {self.user.last_name}"
     
-#     def set_pin(self, raw_pin):
-#         self.pin = make_password(raw_pin)
-
-#     def check_pin(self, raw_pin):
-#         return check_password(raw_pin, self.pin)
-
-#     def save(self, *args, **kwargs):
-#         self.password = self.password
-#         self.pin = make_password(self.pin)
-#         super().save(*args, **kwargs)

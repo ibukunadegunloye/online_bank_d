@@ -1,0 +1,86 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+{% block content %}
+
+<h1 class="text-center mt-3 mb-3">Transaction(s)</h1>
+
+<div class="container">
+  <div class="row">
+    
+    {% include 'bank/profile_menu.html' %}
+
+    {% if transactions_list %}
+    
+    <div class="col-lg-6">
+        <div class="accordion" id="current-accounts">
+            {% for transaction in transactions_list %}
+            <div class="card">
+              <div class="card-header" id="heading-{{ transaction.transfer_id }}">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-{{ transaction.transfer_id }}" aria-expanded="true" aria-controls="collapse-{{ transaction.transfer_id }}">
+                        To: {{ transaction.to_user.first_name}} {{transaction.to_user.last_name  }} || Amount: N{{ transaction.transfer_amount }} || {{ transaction.transfer_date|date:"y-m-d" }}
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse-{{ transaction.transfer_id }}" class="collapse" aria-labelledby="heading-{{ transaction.transfer_id }}" data-parent="#current-accounts">
+                <div class="card-body">
+                    <p>Transaction ID: {{ transaction.transfer_id }}</p>
+                    <br>
+                    <p>Transfer Description: {{ transaction.transfer_description }}</p>
+                </div>
+            </div>
+            </div>
+            {% empty %}
+            <div class="card-body text-center py-5">
+                <p class="text-muted h4">No accounts available at this time.</p>
+            </div>
+            {% endfor %}
+        
+    </div>
+
+    <!-- Add pagination links -->
+    <div class="col-lg-12">
+      <div class="pagination justify-content-center mt-5">
+        <span class="step-links">
+            {% if transactions_list.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ transactions_list.previous_page_number }}">&lsaquo; previous</a>
+            {% endif %}
+
+            <span class="current-page">
+                Page {{ transactions_list.number }} of {{ transactions_list.paginator.num_pages }}.
+            </span>
+
+            {% if transactions_list.has_next %}
+                <a href="?page={{ transactions_list.next_page_number }}">next &rsaquo;</a>
+                <a href="?page={{ transactions_list.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- Add more sections for account information, transactions, and settings -->
+    {% else %}
+    <div class="card-body text-center py-5">
+    <p class="text-muted h4">No accounts available at this time.</p>
+    </div>
+    {% endif %}
+    </div>
+  </div>
+</div>
+<br>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -33,18 +33,7 @@
 
 
                   {% if user.is_authenticated %}
-
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Account
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-                        <li><a class="dropdown-item" href="{% url 'savings_account'%}">Open Savings Account</a></li>
-                        <li><a class="dropdown-item" href="{% url 'current_account'%}">Open a Current Account</a></li>
-                    </ul>
-                  </li>
-
+                    <a class="nav-link dropdown-toggle" href="{% url 'profile' %}">Account</a>
 
                   <li class="nav-item @@contact__active">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>

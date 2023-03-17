@@ -1,0 +1,63 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+  <h1 class="text-center mt-3 mb-3">Transfers</h1>
+
+  <div class="container">
+    <div class="row">
+      
+      {% include 'bank/profile_menu.html' %}
+
+      <!-- Transfer to same user -->
+      <div class="card-body">
+        <form method="post" id="credit-account">
+          {% csrf_token %}
+          <h5><label for="dest_account">Credit Account</label></h5><br>
+          <div class="form-group">
+            <label for="dest_account">Account to Credit</label>
+            <select class="form-control" id="dest_account" name="dest_account">
+              {% for account in savings_accounts %}
+              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }} ||  N{{ account.account_balance }}</option>
+              {% endfor %}
+              {% for account in current_accounts %}
+              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }} ||  N{{ account.account_balance }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input class="form-control" id="amount" name="amount" pattern="\d+" title="Please enter only digits">
+          </div>
+          
+          <div class="form-group">
+
+            <label for="credit_source">Credit Source</label>
+            <select class="form-control" name="credit_source" id="credit_source">
+                <option value="">--Please select an option--</option>
+                <option value="Direct Deposit">Direct Deposit</option>
+                <option value="Cash Deposit">Cash Deposit</option>
+                <option value="Transfer">Transfer</option>
+                <option value="Refund">Refund</option>
+                <option value="Reward">Reward</option>
+                <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input class="form-control" id="description" name="description">
+          </div>
+          <div class="form-group">
+            <label for="amount">Pin</label>
+            <input class="form-control" id="pin" name="pin" type="password" pattern="\d{6}" title="Please enter only digits">
+          </div>
+          <button type="submit" class="btn btn-success">Transfer</button>
+        </form>
+      </div>
+  </div>
+
+  
+{% endblock %}
+

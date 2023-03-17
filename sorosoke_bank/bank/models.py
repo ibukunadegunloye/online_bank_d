@@ -32,7 +32,7 @@ class CreateSavingsAccount(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f" {self.user.first_name} ||{self.account_number} || {self.account_type}"
+        return f" {self.user.first_name} ||{self.account_number}"
 
 
 
@@ -64,7 +64,7 @@ class CreateCurrentAccount(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.account_number} || {self.account_type}"
+        return f" {self.user.first_name} || {self.account_number}"
 
 
 class Transfer(models.Model):
@@ -76,6 +76,42 @@ class Transfer(models.Model):
     to_account_number = models.CharField(max_length=12, editable=False, null=True)
     transfer_amount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     transfer_date = models.DateTimeField(auto_now_add=True)
+    transfer_description = models.CharField(max_length=255, null=True)
 
     def __str__(self):
-        return f"{self.from_account_number} || {self.to_account_number}"
+        return f"{self.transfer_id} || {self.from_account_number} || {self.to_account_number}"
+
+
+
+class Credit(models.Model):
+
+    credit_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    dest_account = models.ForeignKey(ExtendedUser, on_delete=models.CASCADE, related_name='dest_account', null=True)
+    dest_account_number = models.CharField(max_length=12, editable=False, null=True)
+    credit_amount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
+    credit_source = models.CharField(max_length=50, null=True)
+    credit_time = models.DateTimeField(auto_now_add=True)
+    credit_description = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return f"{self.credit_id} || {self.credit_amount} || {self.dest_account_number}"
+
+
+class TransferEmailLog(models.Model):
+    user = models.ForeignKey(ExtendedUser, on_delete=models.CASCADE, null=True, related_name='transfer_email_log')
+    subject = models.CharField(max_length=100)
+    body = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Transfer Email Log for {self.user.first_name} {self.user.last_name}"
+
+
+class CreditEmailLog(models.Model):
+    user = models.ForeignKey(ExtendedUser, on_delete=models.CASCADE, null=True, related_name='credit_email_log')
+    subject = models.CharField(max_length=100)
+    body = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Credit Email Log for {self.user.first_name} {self.user.last_name}"

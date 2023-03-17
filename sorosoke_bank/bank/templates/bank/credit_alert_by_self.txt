@@ -1,0 +1,26 @@
+Credit Alert
+
+Dear {{ user.first_name }} {{ user.last_name }},
+
+Sorosoke Bank electronic Notification Service (SSBeNS)
+
+This is to notify you that your account with us has been credited.
+
+The details of this transaction are shown below:
+
+Transaction Notification details
+
+Account Number: {{ dest_account.account_number }}
+Amount: NGN {{ amount }}
+Date and time: {{ credit_date }} {{ credit_time }}
+Sender: {{ credit_source }}
+Transaction ID: {{ credit_id }}
+Description: {{ description }}
+Account balance: NGN {{ dest_account.account_balance }}
+
+If you have any questions or concerns regarding this transaction, please contact our customer support team.
+
+Thank you for choosing our services.
+
+Best regards,
+Sorosoke Bank

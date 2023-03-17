@@ -8,43 +8,57 @@
   <div class="row">
     
     {% include 'bank/profile_menu.html' %}
-    
+
     {% if accounts %}
-    {% for account in accounts %}
-    <div class="col-lg-9">
-      <div id="profile" class="card mb-3">
+    
+    <div class="col-lg-6">
+        <div class="accordion" id="current-accounts">
+            {% for account in accounts %}
+            <div class="card">
+              <div class="card-header" id="heading-{{ account.account_number }}">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-{{ account.account_number }}" aria-expanded="true" aria-controls="collapse-{{ account.account_number }}">
+                    Account {{ account.account_number }} - Balance: {{ account.account_balance }}
+                  </button>
+                </h2>
+              </div>
         
-        <div class="card-header list-group-item active">
-          Profile Information
-        </div>
-        <div class="card-body">
-          <table class="table">
-            <tbody>
-              <tr>
-                <td><strong>Account Number:</strong></td>
-                <td>{{ account.account_number }}</td>
-              </tr>
-              <tr>
-                <td><strong>Account Balance:</strong></td>
-                <td>{{ account.account_balance }}</td>
-              </tr>
-              <tr>
-                <td><strong>Send Money?:</strong></td>
-                <td>Transfer Funds <a href="#"><button class="btn btn-lg btn-success"></button></a></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {% endfor %}
-      <!-- Add more sections for account information, transactions, and settings -->
-        {% else %}
-        <div class="card-body text-center py-5">
-            <p class="text-muted h4">No accounts available at this time.</p>
-        </div>
-        {% endif %}
+              <div id="collapse-{{ account.account_number }}" class="collapse" aria-labelledby="heading-{{ account.account_number }}" data-parent="#current-accounts">
+                <div class="card-body">
+                  <p>Contents of Account {{ account.account_number }}</p>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="card-body text-center py-5">
+                <p class="text-muted h4">No accounts available at this time.</p>
+            </div>
+            {% endfor %}
+        
+    </div>
+    
+    <!-- Add more sections for account information, transactions, and settings -->
+    {% else %}
+    <div class="card-body text-center py-5">
+    <p class="text-muted h4">No accounts available at this time.</p>
+    </div>
+    {% endif %}
     </div>
   </div>
 </div>
 <br>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
