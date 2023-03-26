@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth import authenticate
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.http import JsonResponse
 from account.forms import ExtendedUserForm
@@ -173,6 +174,7 @@ def savings_account(request):
         if form.is_valid():
             savings_account = form.save(commit=False)
             savings_account.user = request.user
+            savings_account.account_balance = form.cleaned_data['account_balance']
             savings_account.save()
             messages.success(request, f'Your Savings account has been created successfully')
             return redirect('home')
@@ -188,6 +190,7 @@ def current_account(request):
         if form.is_valid():
             current_account = form.save(commit=False)
             current_account.user = request.user
+            current_account.account_balance = form.cleaned_data['account_balance']
             current_account.save()
             messages.success(request, f'Your Current account has been created successfully')
             return redirect('home')
@@ -231,59 +234,65 @@ def current(request):
 
 @login_required
 def credit(request):
-    user = request.user
-    current_accounts = CreateCurrentAccount.objects.filter(user=user)
-    savings_accounts = CreateSavingsAccount.objects.filter(user=user)
-    context = {
-        'current_accounts': current_accounts,
-        'savings_accounts': savings_accounts,
-    }
-    
-    if request.method == 'POST':
-        dest_account = request.POST.get('dest_account')
-        amount = request.POST.get('amount')
-        credit_source = request.POST.get('credit_source')
-        description = request.POST.get('description')
-        pin = request.POST.get('pin')
-            # Verify user's PIN
-        if not user.check_pin(pin):
-            messages.error(request, "Invalid PIN.")
-            return redirect('credit')
+    try:
+        if not request.user.is_staff or not request.user.is_superuser:
+            raise PermissionDenied
 
-        # Retrieve the destination user by account number
-        try:
-            dest_account = CreateCurrentAccount.objects.get(account_number=dest_account)
-        except CreateCurrentAccount.DoesNotExist:
-            try:
-                dest_account = CreateSavingsAccount.objects.get(account_number=dest_account)
-            except CreateSavingsAccount.DoesNotExist: 
-                messages.error(request, "Destination account does not exist.")
+        user = request.user
+        current_accounts = CreateCurrentAccount.objects.filter(user=user)
+        savings_accounts = CreateSavingsAccount.objects.filter(user=user)
+        context = {
+            'current_accounts': current_accounts,
+            'savings_accounts': savings_accounts,
+        }
+        
+        if request.method == 'POST':
+            dest_account = request.POST.get('dest_account')
+            amount = request.POST.get('amount')
+            credit_source = request.POST.get('credit_source')
+            description = request.POST.get('description')
+            pin = request.POST.get('pin')
+            # Verify user's PIN
+            if not user.check_pin(pin):
+                messages.error(request, "Invalid PIN.")
                 return redirect('credit')
 
-        amount = decimal.Decimal(amount)
+            # Retrieve the destination user by account number
+            try:
+                dest_account = CreateCurrentAccount.objects.get(account_number=dest_account)
+            except CreateCurrentAccount.DoesNotExist:
+                try:
+                    dest_account = CreateSavingsAccount.objects.get(account_number=dest_account)
+                except CreateSavingsAccount.DoesNotExist: 
+                    messages.error(request, "Destination account does not exist.")
+                    return redirect('credit')
 
-        with transaction.atomic():
-            
-            # Create a new Credit object and save it
-            credit = Credit(dest_account=dest_account.user, dest_account_number=dest_account.account_number, credit_amount=amount, credit_source=credit_source, credit_description=description)
-            credit.save()
+            amount = decimal.Decimal(amount)
 
-            # Update the account balance for the user
-            dest_account.account_balance += amount
-            dest_account.save()
+            with transaction.atomic():
+                
+                # Create a new Credit object and save it
+                credit = Credit(dest_account=dest_account.user, dest_account_number=dest_account.account_number, credit_amount=amount, credit_source=credit_source, credit_description=description)
+                credit.save()
 
-            credit_date = credit.credit_time.date()
-            credit_time = credit.credit_time.time()
-            credit_id = credit.credit_id
+                # Update the account balance for the user
+                dest_account.account_balance += amount
+                dest_account.save()
 
-            # Send a credit alert email to the user
-            send_credit_alert(dest_account, amount, credit_source, credit_date, credit_time, credit_id, description)
+                credit_date = credit.credit_time.date()
+                credit_time = credit.credit_time.time()
+                credit_id = credit.credit_id
 
-            messages.success(request, "Credit made successfully!")
-            return redirect('credit')
+                # Send a credit alert email to the user
+                send_credit_alert(dest_account, amount, credit_source, credit_date, credit_time, credit_id, description)
 
-    return render(request, 'bank/credit.html', context)
+                messages.success(request, "Credit made successfully!")
+                return redirect('credit')
 
+        return render(request, 'bank/credit.html', context)
+
+    except PermissionDenied as e:
+        return render(request, 'bank/credit_error.html', {'message': 'You do not have permission to access this page.'})
 
 
 #page to make transfers
@@ -395,7 +404,7 @@ def search_account(request):
 def transaction_history(request):
     user = request.user
     transactions = Transfer.objects.filter(from_user=user).order_by('-transfer_date')
-    paginator = Paginator(transactions, 4)  # Show 10 transactions per page
+    paginator = Paginator(transactions, 6)  # Show 10 transactions per page
     page = request.GET.get('page')
     transactions_list = paginator.get_page(page)
     context = {

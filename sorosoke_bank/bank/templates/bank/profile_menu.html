@@ -1,14 +1,14 @@
 <div class="col-lg-3">
-    <div class="list-group">
-      <a href="{% url 'profile' %}" class="list-group-item active">
-        Profile
-      </a>
-      <a href="{% url 'savings_account' %}" class="list-group-item">Open Savings Account</a>
-      <a href="{% url 'current_account' %}" class="list-group-item">Open Current Account</a>
-      <a href="{% url 'credit' %}" class="list-group-item">Credit</a>
-      <a href="{% url 'transfer' %}" class="list-group-item">Transfers</a>
-      <a href="{% url 'savings' %}" class="list-group-item">Savings Account(s)</a>
-      <a href="{% url 'current' %}" class="list-group-item">Current Account(s)</a>
-      <a href="{% url 'transaction_history' %}" class="list-group-item">Transactions</a>
-    </div>
+  <div class="list-group">
+    <a href="{% url 'profile' %}" class="list-group-item active">Profile</a>
+    <a href="{% url 'savings_account' %}" class="list-group-item">Open Savings Account</a>
+    <a href="{% url 'current_account' %}" class="list-group-item">Open Current Account</a>
+    <a href="{% url 'transfer' %}" class="list-group-item">Transfers</a>
+    <a href="{% url 'savings' %}" class="list-group-item">Savings Account(s)</a>
+    <a href="{% url 'current' %}" class="list-group-item">Current Account(s)</a>
+    <a href="{% url 'transaction_history' %}" class="list-group-item">Transactions</a>
+    {% if user.is_superuser %}
+    <a href="{% url 'credit' %}" class="list-group-item">Credit</a>
+    {% endif %}
   </div>
+</div>

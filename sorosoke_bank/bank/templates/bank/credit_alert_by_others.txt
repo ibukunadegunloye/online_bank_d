@@ -2,7 +2,7 @@ Credit Alert
 
 Dear {{ user.first_name }} {{ user.last_name }},
 
-Sorosoke Bank electronic Notification Service (SSBeNS)
+Sọrọ sókè Bank electronic Notification Service (SSBeNS)
 
 This is to notify you that your account with us has been credited.
 The details of this transaction are shown below:
@@ -21,4 +21,4 @@ If you have any questions or concerns regarding this transaction, please contact
 Thank you for choosing our services.
 
 Best regards,
-Sorosoke Bank
+Sọrọ sókè Bank

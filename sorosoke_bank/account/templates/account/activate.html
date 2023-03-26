@@ -1,27 +1,6 @@
 {% autoescape off %}
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Activate Your Sorosoke Bank Account</title>
-</head>
-<body>
-	<p>Dear {{ user.first_name }} {{ user.last_name }},</p>
-	<p>Thank you for choosing Sorosoke Bank for your banking needs. We're excited to have you on board and look forward to helping you achieve your financial goals.</p>
-	<p>To activate your account and gain access to all of our online banking features, please follow these simple steps:</p>
-	<ol>
-		<li>Click on the activation link below to verify your email address:<br>
-			<a href="http://{{domain}}{% url 'activate_user' uidb64=user_id token=token %}">Activation Link</a></li>
-		<li>Once you have verified your email address, you will be prompted to log in to your account.</li>
-		<li>After logging in, you will be able to start using all of our online banking features.</li>
-	</ol>
-	<p>If you have any questions or encounter any issues during the activation process, please don't hesitate to contact our customer support team. We're available to help you every step of the way.</p>
-	<p>Thank you for choosing [Bank Name]. We're committed to providing you with a secure and convenient banking experience.</p>
-	<p>Best regards,<br>
-	Edet<br>
-	Sorosoke Bank Team</p>
-</body>
-</html>
+http://{{domain}}{% url 'activate_user' uidb64=uid token=token %}
 
 {% endautoescape %}
 

@@ -16,7 +16,7 @@ class CreateSavingsAccount(models.Model):
     user = models.ForeignKey(ExtendedUser, on_delete=models.CASCADE)
     account_type = models.CharField(max_length=255, default='Savings Account', null=False)
     account_number = models.CharField(primary_key=True, max_length=12, editable=False)
-    account_balance = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
+    account_balance = models.DecimalField(max_digits=20, decimal_places=2, default=1000000.00)
     account_created_at = models.DateTimeField(auto_now_add=True)
     account_updated_at = models.DateTimeField(auto_now=True)
 
@@ -48,7 +48,7 @@ class CreateCurrentAccount(models.Model):
     user = models.ForeignKey(ExtendedUser, on_delete=models.CASCADE)
     account_type = models.CharField(max_length=255, default='Current Account', null=False)
     account_number = models.CharField(primary_key=True, max_length=12, editable=False)
-    account_balance = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
+    account_balance = models.DecimalField(max_digits=20, decimal_places=2, default=1000000.00)
     account_created_at = models.DateTimeField(auto_now_add=True)
     account_updated_at = models.DateTimeField(auto_now=True)
 

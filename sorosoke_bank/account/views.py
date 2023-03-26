@@ -14,29 +14,37 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_protect
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+import threading
 
 # Create your views here.
 
+class EmailThread(threading.Thread):
 
-def send_activation_email(request,user):
-    current_site = get_current_site(request)
+    def __init__(self,msg):
+        self.msg = msg
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.msg.send()
+
+
+def send_activation_email(user, request):
+    current_site = get_current_site(request).domain
     subject = 'Activate your account'
 
-    # Render the HTML content using a template
-    html_content = render_to_string('account/activate.html', {
+    context = {
         'user': user,
         'domain': current_site,
-        'user_id': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': generate_token.make_token(user)
-    })
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': generate_token.make_token(user),
+    }
+    # Render the HTML content using a template
+    html_content = render_to_string('account/activate.html', context)
 
     # Create a plain text version of the email
-    text_content = render_to_string('account/activate.txt', {
-        'user': user,
-        'domain': current_site,
-        'user_id': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': generate_token.make_token(user)
-    })
+    text_content = render_to_string('account/activate.txt', context)
+
+
 
     # Create the email message object and attach the HTML content as an alternative
     from_email = settings.EMAIL_HOST_USER
@@ -44,7 +52,7 @@ def send_activation_email(request,user):
     msg.attach_alternative(html_content, "text/html")
 
     # Send the email
-    msg.send()  
+    EmailThread(msg).start()
     
     AccountVerificationEmailLog.objects.create(
         user=user,
@@ -127,7 +135,7 @@ def register_account(request):
             savings_account = CreateSavingsAccount(user=user)
             savings_account.save()
 
-            send_activation_email(request, user)
+            send_activation_email(user, request)
             messages.success(request, f'An email has been sent to activate your account!')
 
             return redirect('login')
@@ -136,26 +144,28 @@ def register_account(request):
     return render(request, 'account/register_account.html', {'form': form})
 
 
-def activate_user(request,uidb64,token):
-
+def activate_user(request, uidb64, token):
+    
+    print(uidb64)
+    print(token)
     try:
-        user_id = force_str(urlsafe_base64_decode(uidb64))
-
-        user = ExtendedUser.objects.get(pk=user_id)
-
-
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        print(uid)
+        user = ExtendedUser.objects.get(pk=uid)
+        print(user.first_name)
     except Exception as e:
         user = None
-    
-    if user and generate_token.check_token(user,token):
+
+    if user is not None and generate_token.check_token(user, token):
         user.is_email_verified = True
         user.save()
-        messages.success(request, f'Email verified you can login!')
+        messages.success(request, f'Email Verified, You can now Login.')
         user_account = CreateSavingsAccount.objects.get(user=user)
         welcome_mail(request, user, user_account)
         return redirect('login')
-    
-    return render(request,'account/activation_failed.html',{'user':user})
+    else:
+        return render(request, 'account/activation_failed.html', {'user': user})
+
 
 
 
