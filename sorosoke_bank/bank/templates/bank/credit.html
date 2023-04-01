@@ -18,14 +18,10 @@
           <h5><label for="dest_account">Credit Account</label></h5><br>
           <div class="form-group">
             <label for="dest_account">Account to Credit</label>
-            <select class="form-control" id="dest_account" name="dest_account">
-              {% for account in savings_accounts %}
-              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }} ||  N{{ account.account_balance }}</option>
-              {% endfor %}
-              {% for account in current_accounts %}
-              <option value="{{ account.account_number }}">{{ account.account_type }} - {{ account.account_number }} ||  N{{ account.account_balance }}</option>
-              {% endfor %}
-            </select>
+            <div class="form-group">
+              <input class="form-control" id="to_account" name="to_account" pattern="^\d{12}$" title="Please enter only digits">
+              <input class="form-control" type="text" name="dest_account" id="dest_account" readonly>
+            </div>
           </div>
           <div class="form-group">
             <label for="amount">Amount</label>
@@ -58,6 +54,34 @@
       </div>
   </div>
 
+  <script>
+    var delayTimer;
+    $('#credit-account #to_account').keyup(function(){
+      clearTimeout(delayTimer);
+      $('#dest_account').val('Searching ...');
+      delayTimer = setTimeout(function(){
+        var account_number = $('#credit-account #to_account').val();
+        $.ajax({
+          url: '/search/account',
+          data: {
+            'account_number': account_number,
+            'random_number' : Math.random(),
+          }, 
+          dataType: 'json',
+          success: function(data){        
+            console.log(data);      
+            if (data.found) {
+              $('#dest_account').val(data.first_name + ' ' + data.last_name);
+            } else {
+              $('#dest_account').val('Account not found.');
+            }
+          }
+        });
+      }, 2000);
+    });
+  </script>
+
+  
   
 {% endblock %}
 

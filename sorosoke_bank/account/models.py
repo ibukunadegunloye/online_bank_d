@@ -62,7 +62,7 @@ class ExtendedUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, null=True)
     last_name = models.CharField(max_length=255, null=True)
     password = models.CharField(max_length=255)
-    pin = models.CharField(max_length=6, validators=[validate_min_length])
+    pin = models.CharField(max_length=6)
     phone_number = PhoneNumberField(blank=False, null=True, unique=True)
     address = models.CharField(max_length=255, null=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True)

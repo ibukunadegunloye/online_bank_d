@@ -1,4 +1,5 @@
 {% autoescape off %}
+{% load humanize %}
 
 <!DOCTYPE html>
 <html>
@@ -6,18 +7,18 @@
 	<title>Welcome to Sorosoke Bank!</title>
 </head>
 <body>
-	<p>Subject: Welcome to Sorosoke Bank!</p>
 	<p>Dear {{ user.first_name }},</p>
 	<p>I'm thrilled to welcome you to Sorosoke Bank! We appreciate your trust in us and look forward to helping you manage your finances with our online banking services.</p>
 	<p>Your account has been successfully created, and we're excited to share some information with you. Your account details are as follows:</p>
 	<ul>
 		<li>Name: {{ user.first_name }} {{ user.last_name }}</li>
-		<li>Account Number: {{ user_account.account_number }}</li>
-		<li>Account Type: {{ user_account.account_type }}</li>
+		<li>Account Number: {{ account_user.account_number }}</li>
+		<li>Account Balance: NGN {{ account_user.account_balance|floatformat:2|intcomma  }}</li>
 	</ul>
+	<p>We're happy to let you know that your account has been credited with a welcome bonus of NGN {{ account_user.account_balance|floatformat:2|intcomma  }} for activating your account.</p>
 	<p>To get started, please log in to your account by following these simple steps:</p>
 	<ol>
-		<li>Go to our <a href="#">website</a> or download our mobile app from the App Store or Google Play.</li>
+		<li>Go to our <a href="{% url 'home' %}">website</a> or download our mobile app from the App Store or Google Play.</li>
 		<li>Click the 'Log In' button and enter your email address and password.</li>
 		<li>Once you're logged in, you'll have access to all the features of our online banking platform, including the ability to view your account balances, make transfers, pay bills, and much more.</li>
 	</ol>
@@ -28,4 +29,5 @@
 	<p> Sorosoke Bank Team </p>
 </body>
 </html>
+
 {% endautoescape %}

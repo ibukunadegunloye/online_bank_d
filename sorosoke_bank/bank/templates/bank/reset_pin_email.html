@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PIN Reset Link</title>
+</head>
+<body>
+	<p>Dear {{ user.first_name }},</p>
+	<p>We have received a request to reset the PIN for your account. If you did not make this request, please disregard this email.</p>
+	<p>To reset your PIN, please click on the link below:</p>
+	<a href="http://{{domain}}{% url 'reset_pin_confirm' uidb64=uid token=token %}">Reset PIN</a>
+	<p>You will be redirected to a page where you can input a new PIN.</p>
+	<p>Please note that for security reasons, the link will expire after 24 hours. If you continue to experience any difficulties, please contact our customer support team.</p>
+	<p>Thank you for choosing our service.</p>
+	<p>Best regards,</p>
+	<p>Edet</p>
+</body>
+</html>

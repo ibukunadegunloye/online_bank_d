@@ -1,0 +1,17 @@
+Dear {{ user.first_name }},
+
+We have received a request to reset the PIN for your account. If you did not make this request, please disregard this email.
+
+To reset your PIN, please click on the link below:
+
+http://{{domain}}{% url 'reset_pin_confirm' uidb64=uid token=token %}
+
+You will be redirected to a page where you can input a new PIN.
+
+Please note that for security reasons, the link will expire after 24 hours. If you continue to experience any difficulties, please contact our customer support team.
+
+Thank you for choosing our service.
+
+Best regards,
+
+Edet

@@ -7,6 +7,7 @@
     <a href="{% url 'savings' %}" class="list-group-item">Savings Account(s)</a>
     <a href="{% url 'current' %}" class="list-group-item">Current Account(s)</a>
     <a href="{% url 'transaction_history' %}" class="list-group-item">Transactions</a>
+    <a href="{% url 'reset_pin' %}" class="list-group-item">Reset PIN</a>
     {% if user.is_superuser %}
     <a href="{% url 'credit' %}" class="list-group-item">Credit</a>
     {% endif %}

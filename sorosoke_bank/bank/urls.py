@@ -15,4 +15,6 @@ urlpatterns = [
     path('savings_account/', views.savings_account, name='savings_account'),
     path('current_account/', views.current_account, name='current_account'),
     path('search/account', views.search_account, name='search_account'),
+    path('reset_pin', views.reset_pin, name='reset_pin'),
+    path('reset_pin_confirm/<uidb64>/<token>/', views.reset_pin_confirm, name='reset_pin_confirm'),
 ]

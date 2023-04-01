@@ -1,0 +1,25 @@
+{% extends 'bank/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<!--Change PIN--> 
+<div class="container">
+  <br><br>
+	<h1 class="text-center my-4">Change Pin</h1>
+	<form method="POST">
+		{% csrf_token %}
+		<div class="row">
+			<div class="col-md-8 mx-auto">
+				{{ form|crispy }}  
+			</div>
+		</div>
+		<br>                  
+		<div class="form-group text-center">
+			<button class="btn btn-success" type="submit">Change PIN</button>
+		</div>
+	</form>
+</div>
+<br><br>
+{% endblock %}

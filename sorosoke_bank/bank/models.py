@@ -5,7 +5,7 @@ from django.contrib import messages
 from .utils import initial_deposit_minimum
 import random
 import uuid
-
+from django.utils import timezone
 
 
 
@@ -115,3 +115,14 @@ class CreditEmailLog(models.Model):
 
     def __str__(self):
         return f"Credit Email Log for {self.user.first_name} {self.user.last_name}"
+
+
+
+
+class PinResetToken(models.Model):
+    user = models.OneToOneField(ExtendedUser, on_delete=models.CASCADE)
+    token = models.CharField(max_length=64)
+    expiry_time = models.DateTimeField()
+    
+    def is_valid(self):
+        return timezone.now() < self.expiry_time

@@ -1,15 +1,13 @@
+Dear {{ user.first_name }},
 
-Subject: Welcome to Sorosoke Bank!
-
-Dear {{ user.first_name }},,
-
-I'm thrilled to welcome you to [Bank Name]! We appreciate your trust in us and look forward to helping you manage your finances with our online banking services.
+I'm thrilled to welcome you to Sorosoke Bank! We appreciate your trust in us and look forward to helping you manage your finances with our online banking services.
 
 Your account has been successfully created, and we're excited to share some information with you. Your account details are as follows:
 
 Name: {{ user.first_name }} {{ user.last_name }}
-Account Number: {{ user_account.account_number }}
-Account Type: {{ user_account.account_type }}
+Account Number: {{ user.account_number }}
+Account Balance: {{ user.account_balance }}
+We're happy to let you know that your account has been credited with a welcome bonus of NGN {{ user.account_balance }} for activating your account.
 
 To get started, please log in to your account by following these simple steps:
 
@@ -21,10 +19,5 @@ If you have any questions or concerns, our friendly and knowledgeable support te
 Thank you again for choosing Sorosoke Bank as your financial partner. We are committed to providing you with a seamless and secure banking experience, and we're excited to be on this journey with you.
 
 Best regards,
-
 Ifeoma
-
 Sorosoke Bank Team
-
-
-

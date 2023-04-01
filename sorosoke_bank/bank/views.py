@@ -5,19 +5,29 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.http import JsonResponse
 from account.forms import ExtendedUserForm
-from .forms import Savings_Account_Form, Current_Account_Form
+from .forms import Savings_Account_Form, Current_Account_Form, ChangePinForm
 from account.models import ExtendedUser
-from .models import CreateCurrentAccount, CreateSavingsAccount, Transfer, Credit, CreditEmailLog, TransferEmailLog
+from .models import CreateCurrentAccount, CreateSavingsAccount, Transfer, Credit, CreditEmailLog, TransferEmailLog, PinResetToken
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags import humanize
 import decimal
 import os
+import threading
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.urls import reverse
+from django.utils.timezone import now
+from datetime import timedelta, timezone
+
 
 
 # Create your views here.
@@ -177,7 +187,7 @@ def savings_account(request):
             savings_account.account_balance = form.cleaned_data['account_balance']
             savings_account.save()
             messages.success(request, f'Your Savings account has been created successfully')
-            return redirect('home')
+            return redirect('profile')
     else:
         form = Savings_Account_Form()
     return render(request, 'bank/savings_account.html', {'form': form})
@@ -193,7 +203,7 @@ def current_account(request):
             current_account.account_balance = form.cleaned_data['account_balance']
             current_account.save()
             messages.success(request, f'Your Current account has been created successfully')
-            return redirect('home')
+            return redirect('profile')
     else:
         form = Current_Account_Form()
     return render(request, 'bank/current_account.html', {'form': form})
@@ -247,7 +257,7 @@ def credit(request):
         }
         
         if request.method == 'POST':
-            dest_account = request.POST.get('dest_account')
+            dest_account = request.POST.get('to_account')
             amount = request.POST.get('amount')
             credit_source = request.POST.get('credit_source')
             description = request.POST.get('description')
@@ -287,7 +297,7 @@ def credit(request):
                 send_credit_alert(dest_account, amount, credit_source, credit_date, credit_time, credit_id, description)
 
                 messages.success(request, "Credit made successfully!")
-                return redirect('credit')
+                return redirect('profile')
 
         return render(request, 'bank/credit.html', context)
 
@@ -331,7 +341,7 @@ def transfer(request):
             try:
                 from_account = CreateCurrentAccount.objects.get(account_number=from_account)
             except CreateCurrentAccount.DoesNotExist: 
-                messages.error(request, "Host account does not exist.")
+                messages.error(request, "Source account does not exist.")
                 return redirect('transfer')
 
         # Retrieve the destination user by account number
@@ -370,7 +380,7 @@ def transfer(request):
             send_transfer_credit_alert(to_account, from_account, amount, transfer_date, transfer_time, transfer_id, description)
 
             messages.success(request, "Transfer made successfully!")
-            return redirect('transfer')
+            return redirect('profile')
 
     return render(request, 'bank/transfer.html', context)
 
@@ -415,19 +425,116 @@ def transaction_history(request):
     return render(request, 'bank/transaction_history.html', context)
 
 
+class EmailThread(threading.Thread):
+
+    def __init__(self,msg):
+        self.msg = msg
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.msg.send()
+
+
+def send_pin_reset_email(user,request):
+
+    # Generate token and expiry time
+    token_generator = PasswordResetTokenGenerator()
+    token = token_generator.make_token(user)
+    expiry_time = now() + timedelta(hours=1)
+ 
+    # check if Token currently exists 
+    pin_reset_token = PinResetToken.objects.filter(user=user).first()
+
+    if pin_reset_token:
+        pin_reset_token.delete()
+        pin_reset_token = PinResetToken.objects.create(
+            user=user,
+            token=token,
+            expiry_time=expiry_time,
+        )
+    else:
+        pin_reset_token = PinResetToken.objects.create(
+            user=user,
+            token=token,
+            expiry_time=expiry_time,
+        )
+
+    current_site = get_current_site(request).domain
+    subject = 'Reset your PIN'
+
+    context = {
+        'user': user,
+        'domain': current_site,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': urlsafe_base64_encode(force_bytes(pin_reset_token.pk)),
+    }
+
+    # Render the HTML content using a template
+    html_content = render_to_string('bank/reset_pin_email.html', context)
+
+    # Create a plain text version of the email
+    text_content = render_to_string('bank/reset_pin_email.txt', context)
+
+    # Create the email message object and attach the HTML content as an alternative
+    from_email = settings.EMAIL_HOST_USER
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [user.email])
+    msg.attach_alternative(html_content, "text/html")
+
+    # Send the email
+    EmailThread(msg).start()
+    
+
+
+@login_required
+def reset_pin(request):
+    user = request.user
+    if request.method == 'POST':
+        send_pin_reset_email(user, request)
+        messages.success(request, f'PIN Reset Email sent succesfully')
+        return redirect('profile')
+    else:
+        return render(request, 'bank/reset_pin.html',{'user':user})
 
 
 
+def reset_pin_confirm(request, uidb64, token):
+    try:
+        pin_reset_token = PinResetToken.objects.get(pk=urlsafe_base64_decode(token))
+        uid = force_str(urlsafe_base64_decode(uidb64))
+    except (TypeError, ValueError, OverflowError, ExtendedUser.DoesNotExist):
+        pin_reset_token = None
 
+    # Check if token is valid and user is found
+    if pin_reset_token is not None and pin_reset_token.is_valid():
+        user = pin_reset_token.user
+        if request.method == 'POST':
+            form = ChangePinForm(request.POST)
+            if form.is_valid():
+                pin1 = form.cleaned_data['pin1']
+                pin2 = form.cleaned_data['pin2']
+                
+                if pin1 != pin2:
+                    messages.error(request, "PINs do not match.")
+                    return render(request, 'bank/reset_pin_confirm.html', {'form': form})
+            
+                if not pin1.isdigit():
+                    messages.error(request, "PINs must be only digits.")
+                    return render(request, 'bank/reset_pin_confirm.html', {'form': form})
+                
+                if len(pin1) != 6:
+                    messages.error(request, "PIN must be 6 characters long.")
+                    return render(request, 'bank/reset_pin_confirm.html', {'form': form})
 
-
-
-
-
-
-
-
-
+                user.pin = pin1
+                user.save()
+                pin_reset_token.delete()
+                messages.success(request, 'Your PIN has been changed successfully.')
+                return redirect('profile')
+        else:
+            form = ChangePinForm()
+        return render(request, 'bank/reset_pin_confirm.html', {'form': form})
+    else:
+        return render(request, 'bank/reset_pin_failed.html')
 
 
 

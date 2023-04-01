@@ -143,9 +143,19 @@ AUTH_USER_MODEL = 'account.ExtendedUser'
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('ONLINE_BANK_EMAIL_USERNAME') 
-EMAIL_HOST_PASSWORD = os.environ.get('ONLINE_BANK_EMAIL_PASSWORD')
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = '9a83b1ef4fb81c'
+EMAIL_HOST_PASSWORD = '393229d5c48d47'
+EMAIL_PORT = '2525'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ.get('ONLINE_BANK_EMAIL_USERNAME') 
+# EMAIL_HOST_PASSWORD = os.environ.get('ONLINE_BANK_EMAIL_PASSWORD')
+
+# ALLOWED_HOSTS = [
+#     'example.com', 'www.example.com', '533e-105-112-22-78.eu.ngrok.io',
+#     '127.0.0.1'
+# ]

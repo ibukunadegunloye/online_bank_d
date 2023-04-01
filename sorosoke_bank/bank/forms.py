@@ -2,8 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import CreateCurrentAccount, CreateSavingsAccount
 from account.models import ExtendedUser
-
-
+from .utils import validate_min_length
 
 
 class Savings_Account_Form(forms.ModelForm):
@@ -27,8 +26,20 @@ class Current_Account_Form(forms.ModelForm):
         }
         
 
-    
 
+class ChangePinForm(forms.Form):
+    pin1 = forms.CharField(
+        max_length=6,
+        validators=[validate_min_length],
+        widget=forms.PasswordInput(attrs={'placeholder': 'New PIN', 'class': 'form-control'})
+    )
+    pin2 = forms.CharField(
+        max_length=6,
+        validators=[validate_min_length],
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm New PIN', 'class': 'form-control'})
+    )
+
+    
 
 
 # class Create_Account_form(forms.ModelForm):

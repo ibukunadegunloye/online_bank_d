@@ -32,7 +32,7 @@ class ExtendedUserForm(forms.ModelForm):
         }
     password1 = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
-    pin = forms.CharField(max_length=6, widget=forms.PasswordInput)
+    pin = forms.CharField(min_length=6, max_length=6, widget=forms.PasswordInput)
     confirm_pin = forms.CharField(max_length=6, widget=forms.PasswordInput)
 
     def clean(self):
@@ -42,11 +42,18 @@ class ExtendedUserForm(forms.ModelForm):
         pin = cleaned_data.get("pin")
         confirm_pin = cleaned_data.get("confirm_pin")
 
+        if not pin.isdigit():
+            raise forms.ValidationError("PINs must be only digits")
+
         if password1 != password2:
             raise forms.ValidationError("Passwords do not match")
 
-        if pin != confirm_pin:
+        if int(pin) != int(confirm_pin):
             raise forms.ValidationError("PINs do not match")
+
+        if len(pin) != 6:
+            raise forms.ValidationError('PIN must be 6 characters long.')
+
 
     def save(self, commit=True):
         user = super().save(commit=False)
