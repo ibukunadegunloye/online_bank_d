@@ -46,7 +46,7 @@
 <body>
 	<div class="container">
 		<h1>Debit Alert</h1>
-		<p>Dear {{ user.first_name }} {{ user.last_name }},</p>
+		<p>Dear {{ user.user.first_name }},</p>
 
 		<u>Sọrọ sókè Bank electronic Notification Service
 			(SSBeNS)</u>
@@ -59,7 +59,7 @@
 			<li><strong>Account Number: </strong>{{ user.account_number }}</li>
 			<li><strong>Amount: </strong>NGN {{ amount|floatformat:2|intcomma  }}</li>
 			<li><strong>Date and time: </strong>{{ transfer_date }} {{ transfer_time }}</li>
-			<li><strong>Destination: </strong>{{ reciever.first_name }} {{ reciever.last_name }}</li>
+			<li><strong>Destination: </strong>{{ reciever.user.first_name }} {{ reciever.user.last_name }}</li>
 			<li><strong>Transaction ID: </strong>{{ transfer_id }}</li>
 			<li><strong>Description: </strong> {{ description }}</li>
 			<li><strong>Account balance: </strong>NGN {{ user.account_balance|floatformat:2|intcomma  }}</li>

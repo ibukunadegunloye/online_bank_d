@@ -1,6 +1,6 @@
 Credit Alert
 
-Dear {{ user.first_name }} {{ user.last_name }},
+Dear {{ user.first_name }},
 
 Sọrọ sókè Bank electronic Notification Service (SSBeNS)
 
@@ -9,10 +9,10 @@ The details of this transaction are shown below:
 
 Transaction Notification details
 
-Account Number: {{ user.account_number }}
+Account Number: {{ user.user.account_number }}
 Amount: NGN {{ amount }}
 Date and time: {{ transfer_date }} {{ transfer_time }}
-Sender: {{ sender.first_name }} {{ sender.last_name }}
+Sender: {{ sender.user.first_name }} {{ sender.user.last_name }}
 Transaction ID: {{ transfer_id }}
 Description: {{ description }}
 Account balance: NGN {{ user.account_balance }}

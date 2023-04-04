@@ -69,7 +69,7 @@ def send_credit_alert(dest_account, amount, credit_source, credit_time, credit_d
 
     # Create a plain text version of the email
     text_content = render_to_string('bank/credit_alert_by_self.txt', {
-        'user': user,
+        'user': dest_account,
         'amount': amount,
         'credit_source': credit_source,
         'description': description,
